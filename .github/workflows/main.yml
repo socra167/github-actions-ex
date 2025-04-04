@@ -9,6 +9,10 @@ on:
       - "Dockerfile"
     branches:
       - main
+
+permissions:
+  contents: write
+  
 jobs:
   hello1:
     runs-on: ubuntu-latest
