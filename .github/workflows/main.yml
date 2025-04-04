@@ -38,19 +38,9 @@ jobs:
           draft: false
           prerelease: false
 
-  createConfig:
-    name: Create application-secret.yml
-    runs-on: ubuntu-latest
-    needs: makeTagAndRelease
-    steps:
-      - uses: actions/checkout@v4
-      - name: Create application-secret.yml
-        run: |
-          echo "${{ secrets.CONFIG }}" > src/main/resources/application-secret.yml
-
   buildImageAndPush:
     name: Build and Push Docker Image
-    needs: [makeTagAndRelease, createConfig]
+    needs: makeTagAndRelease
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,6 +57,10 @@ jobs:
           echo "OWNER_LC=${OWNER,,}" >> ${GITHUB_ENV}
         env:
           OWNER: "${{ github.repository_owner }}"
+      - uses: actions/checkout@v4
+      - name: Create application-secret.yml
+        run: |
+          echo "${{ secrets.CONFIG }}" > src/main/resources/application-secret.yml
       - name: 빌드 앤 푸시
         uses: docker/build-push-action@v3
         with:
